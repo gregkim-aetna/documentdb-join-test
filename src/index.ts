@@ -1,38 +1,33 @@
 import dotenv from 'dotenv';
-import mongoose from 'mongoose';
+import {faker} from '@faker-js/faker';
 
 import {getMongoClient} from './mongo-client.js';
-import {mongoCrudExample} from './mongo-crud.js';
-
-import {prepareMongooseClient} from './mongoose-client.js';
-import {mongooseCrudExample} from './mongoose-crud.js';
+// import {makeTestData} from './make-test-data.js';
+import {mongoJoinTest} from './mongo-join-test.js';
 
 dotenv.config();
+faker.seed(1);
 
-// Mongo CRUD example
+const maxDrugs = 1000;
+const maxPrescriptions = 1000;
+const maxOrders = 1000;
+const maxMembers = 1000;
 
-console.log('');
-console.log('Mongo CRUD example');
 const mongoClient = await getMongoClient();
-await mongoCrudExample(mongoClient);
 
-// Mongoose CRUD example
+// Make test data
+// await makeTestData(mongoClient, maxDrugs, maxPrescriptions, maxOrders, maxMembers);
 
-// console.log('');
-// console.log('Mongoose CRUD example');
-// await prepareMongooseClient();
-// await mongooseCrudExample();
-
-// Termination example
+// Mongo join test
+await mongoJoinTest(mongoClient, maxDrugs, maxPrescriptions, maxOrders, maxMembers);
 
 process.on('SIGINT', async () => {
+  if (mongoClient) {
+    await mongoClient.close();
     console.log('');
-    console.log('Termination example');
-    if (mongoClient) {
-        await mongoClient.close();
-        console.log('Mongo connection to DocumentDB closed.');
-    }
-    // await mongoose.disconnect();
-    // console.log('Mongoose connection to DocumentDB closed.');
-    process.exit(0);
+    console.log('Mongo connection to DocumentDB closed.');
+  }
+  process.exit(0);
 });
+
+process.kill(process.pid, 'SIGINT');
