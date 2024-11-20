@@ -15,7 +15,7 @@ const prescriptionSchema = new mongoose.Schema({
     dosageUnit: {
         type: String,
         required: true,
-        enum: ['mg', 'pill'],
+        enum: ['mg', 'pill(s)'],
         description: 'Drug dosage unit'
     },
     deleteDate: {
